@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 // Screens
 import 'package:mobile/screens/activityScreen.dart';
+import 'package:mobile/screens/homeFeedScreen.dart';
+import 'package:mobile/screens/misc/settingsScreen.dart';
 import 'package:mobile/screens/privateBlocksScreen.dart';
 import 'package:mobile/screens/publicBlocksScreen.dart';
 
@@ -24,6 +26,14 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  void selectSettings(BuildContext ctx) {
+    Navigator.of(ctx).push(
+      MaterialPageRoute(builder: (_) {
+        return SettingsScreen();
+      }),
+    );
+  }
+
   void _startAddNewBlock(BuildContext ctx) {
     showModalBottomSheet(
         context: ctx,
@@ -33,9 +43,10 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   final List<Widget> _widgetOptions = <Widget>[
+    HomeFeedScreen(),
     PublicBlocksScreen(),
-    PrivateBlocksScreen(),
     ActivityScreen(),
+    PrivateBlocksScreen(),
   ];
 
   @override
@@ -44,25 +55,37 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: Text('Blockbase'),
         centerTitle: true,
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.settings),
+            onPressed: () => selectSettings(context),
+          )
+        ],
       ),
       body: _widgetOptions.elementAt(_selectedIndex),
       bottomNavigationBar: BottomNavigationBar(
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.list),
-            title: Text('Public'),
+            icon: Icon(Icons.home),
+            title: Text('Home'),
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            title: Text('Base'),
+            icon: Icon(Icons.list),
+            title: Text('Public'),
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.notifications),
             title: Text('Activity'),
           ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            title: Text('Base'),
+          ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.deepOrangeAccent,
+        unselectedItemColor: Colors.deepOrangeAccent[100],
+        showUnselectedLabels: true,
+        selectedItemColor: Colors.deepOrange,
         onTap: _selectIndex,
       ),
       floatingActionButton: FloatingActionButton(

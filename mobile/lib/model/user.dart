@@ -3,6 +3,7 @@ import 'package:mobile/model/privateBlock.dart';
 
 class User {
   String id;
+  String imageUrl;
   String firstname;
   String lastname;
   String username;
@@ -13,6 +14,7 @@ class User {
 
   User({
     @required this.id,
+    @required this.imageUrl,
     @required this.firstname,
     @required this.lastname,
     @required this.username,

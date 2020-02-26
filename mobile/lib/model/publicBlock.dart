@@ -1,29 +1,43 @@
 import 'package:flutter/material.dart';
 
-enum Status { completed, expired, active }
-enum Category { sports, random, custom, educational }
-enum Type { active, passive, team, competitive, online, offline }
+// Models
+import 'package:mobile/model/block.dart';
+import 'package:mobile/model/user.dart';
 
-class PublicBlock {
-  String id;
-  String title;
-  String owner;
-  String startDate;
-  String endDate;
-  Category category;
-  Status status;
-  Type type;
+class PublicBlock extends Block with ChangeNotifier {
   int reward;
+  List<User> usersList;
+  bool isWatching;
 
   PublicBlock({
-    @required this.id,
-    @required this.title,
-    @required this.owner,
-    @required this.startDate,
-    @required this.endDate,
-    @required this.category,
-    @required this.status,
-    @required this.type,
+    final String id,
+    final String title,
+    final String imageUrl,
+    final String owner,
+    final String description,
+    final String startDate,
+    final String endDate,
+    final Category category,
+    final Type type,
+    final Status status = Status.active,
     @required this.reward,
-  });
+    @required this.usersList,
+    final this.isWatching = false,
+  }) : super(
+          id: id,
+          title: title,
+          imageUrl: imageUrl,
+          owner: owner,
+          description: description,
+          status: status,
+          startDate: startDate,
+          endDate: endDate,
+          category: category,
+        );
+
+  void toggleWatchingStatus() {
+    isWatching = !isWatching;
+    print(this.isWatching);
+    notifyListeners();
+  }
 }

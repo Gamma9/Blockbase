@@ -1,12 +1,22 @@
 import 'package:flutter/material.dart';
 
 // Models
+import 'package:mobile/model/block.dart';
 import 'package:mobile/model/privateBlock.dart';
+import 'package:mobile/widgets/privateBlocks/privateBlockPreview.dart';
 
 class PrivateBlockItem extends StatelessWidget {
   final PrivateBlock _privateBlockItem;
 
   PrivateBlockItem(this._privateBlockItem);
+
+  void _displayBlockPreview(BuildContext ctx) {
+    showModalBottomSheet(
+        context: ctx,
+        builder: (_) {
+          return PrivateBlockPreview(this._privateBlockItem);
+        });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,6 +62,7 @@ class PrivateBlockItem extends StatelessWidget {
                   radius: 6,
                   backgroundColor: Colors.green,
                 ),
+      onTap: () => _displayBlockPreview(context),
     );
   }
 }

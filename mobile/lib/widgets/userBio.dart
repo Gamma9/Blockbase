@@ -2,14 +2,19 @@ import 'package:flutter/material.dart';
 
 // Models
 import 'package:mobile/model/user.dart';
+import 'package:mobile/widgets/privateBlocks/editProfileScreen.dart';
 
 class UserBio extends StatelessWidget {
   final User user;
 
   UserBio(this.user);
 
-  void _startEditBio() {
-    print('Start edit bio');
+  void _startEditBio(BuildContext ctx) {
+    Navigator.of(ctx).push(
+      MaterialPageRoute(builder: (_) {
+        return EditProfileScreen(this.user);
+      }),
+    );
   }
 
   @override
@@ -80,7 +85,9 @@ class UserBio extends StatelessWidget {
             SizedBox(
               height: 16,
             ),
-            GestureDetector(
+            InkWell(
+              splashColor: Colors.deepOrangeAccent,
+              borderRadius: BorderRadius.circular(15),
               child: Container(
                 padding: EdgeInsets.symmetric(vertical: 4, horizontal: 16),
                 decoration: BoxDecoration(
@@ -95,7 +102,7 @@ class UserBio extends StatelessWidget {
                   ),
                 ),
               ),
-              onTap: () => _startEditBio(),
+              onTap: () => _startEditBio(context),
             ),
           ],
         ),
