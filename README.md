@@ -10,3 +10,4 @@ A list of 25 items that you personally want to complete in a 5 year period, that
 ## Public
 
 The public blockchain marketplace where you can see a list of achievements to try to accomplish, in exchange for a corresponding reward.
+Users can pay or "set a bounty" to create certain internet challenges to do in order to win the prize crypto after finishing the challenge and being voted one of the best entries. 
