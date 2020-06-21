@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/model/appNotification.dart';
+import 'package:mobile/model/notifications/appNotification.dart';
 import 'package:mobile/widgets/misc/noNotifications.dart';
 
 class ActivityScreen extends StatelessWidget {

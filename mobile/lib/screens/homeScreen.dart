@@ -54,10 +54,14 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Blockbase'),
+        leading: IconButton(
+          icon: Icon(Icons.search),
+          onPressed: () {},
+        ),
         centerTitle: true,
         actions: <Widget>[
           IconButton(
-            icon: Icon(Icons.settings),
+            icon: Icon(Icons.more_horiz),
             onPressed: () => selectSettings(context),
           )
         ],

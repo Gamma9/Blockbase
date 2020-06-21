@@ -90,10 +90,11 @@ class PublicBlocks with ChangeNotifier {
   }
 
   // Add New Public Block
-  addNewPublicBlock(PublicBlock publicBlock) {
+  Future<void> addNewPublicBlock(PublicBlock publicBlock) {
     const url = 'https://blockbase-d1c40.firebaseio.com/publicBlocks.json';
 
-    http.post(
+    http
+        .post(
       url,
       body: json.encode({
         'title': publicBlock.title,
@@ -102,41 +103,46 @@ class PublicBlocks with ChangeNotifier {
         'description': publicBlock.description,
         'startDate': publicBlock.startDate,
         'endDate': publicBlock.endDate,
-        // 'type': type,
-        // 'category': category,
-        // 'status': status,
+        'type': publicBlock.type,
+        'category': publicBlock.category,
+        'status': publicBlock.status,
         'usersList': publicBlock.usersList,
         'reward': publicBlock.reward,
       }),
-    );
-    final newPublicBlock = new PublicBlock(
-      title: publicBlock.title,
-      imageUrl: publicBlock.imageUrl,
-      owner: publicBlock.owner,
-      description: publicBlock.description,
-      startDate: publicBlock.startDate,
-      endDate: publicBlock.endDate,
-      reward: publicBlock.reward,
-      type: publicBlock.type,
-      category: publicBlock.category,
-      status: publicBlock.status,
-      usersList: publicBlock.usersList,
-    );
-    _publicBlocksList.add(newPublicBlock);
-    // _publicBlocksList.insert(0, newPublicBlock); Adds at the beginning of the list
-    notifyListeners();
-    print("New Block Created!\n\n" +
-        "Title: ${publicBlock.title}\n" +
-        "Image Url: ${publicBlock.imageUrl}\n" +
-        "Owner: ${publicBlock.owner}\n" +
-        "Description: ${publicBlock.description}\n" +
-        "Start Date: ${publicBlock.startDate}\n" +
-        "End Date: ${publicBlock.endDate}\n" +
-        "Reward: ${publicBlock.reward}\n" +
-        "Type: ${publicBlock.type}\n" +
-        "Category: ${publicBlock.category}\n" +
-        "Status: ${publicBlock.status}\n" +
-        "Users List: ${publicBlock.usersList}\n");
+    )
+        .then((response) {
+      print(json.decode(response.body));
+      final newPublicBlock = new PublicBlock(
+        id: json.decode(response.body)['name'],
+        title: publicBlock.title,
+        imageUrl: publicBlock.imageUrl,
+        owner: publicBlock.owner,
+        description: publicBlock.description,
+        startDate: publicBlock.startDate,
+        endDate: publicBlock.endDate,
+        reward: publicBlock.reward,
+        type: publicBlock.type,
+        category: publicBlock.category,
+        status: publicBlock.status,
+        usersList: publicBlock.usersList,
+      );
+      _publicBlocksList.add(newPublicBlock);
+      // _publicBlocksList.insert(0, newPublicBlock); Adds at the beginning of the list
+      notifyListeners();
+      print("New Block Created!\n\n" +
+          "Title: ${publicBlock.title}\n" +
+          "Image Url: ${publicBlock.imageUrl}\n" +
+          "Owner: ${publicBlock.owner}\n" +
+          "Description: ${publicBlock.description}\n" +
+          "Start Date: ${publicBlock.startDate}\n" +
+          "End Date: ${publicBlock.endDate}\n" +
+          "Reward: ${publicBlock.reward}\n" +
+          "Type: ${publicBlock.type}\n" +
+          "Category: ${publicBlock.category}\n" +
+          "Status: ${publicBlock.status}\n" +
+          "Users List: ${publicBlock.usersList}\n");
+      return Future.value();
+    });
   }
 
   // Update Public Block

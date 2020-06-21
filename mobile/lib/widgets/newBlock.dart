@@ -32,6 +32,7 @@ class _NewBlockState extends State<NewBlock> {
   var typeVal;
   var category = 'Category';
   var categoryVal;
+  var isLoading = false;
   // var newPublicBlock = PublicBlock();
   // var newPrivateBlock = PrivateBlock();
   final _form = GlobalKey<FormState>();
@@ -93,6 +94,9 @@ class _NewBlockState extends State<NewBlock> {
   ];
 
   void _saveForm(blockType) {
+    setState(() {
+      this.isLoading = true;
+    });
     this._form.currentState.save();
     if (blockType == 'public') {
       final newPublicBlock = PublicBlock(
@@ -111,7 +115,11 @@ class _NewBlockState extends State<NewBlock> {
       );
       Provider.of<PublicBlocks>(context, listen: false)
           .addNewPublicBlock(newPublicBlock);
+      this.isLoading = false;
     } else if (blockType == 'private') {
+      setState(() {
+        this.isLoading = true;
+      });
       final newPrivateBlock = PrivateBlock(
         imageUrl: '',
         title: this.blockTitle,
@@ -127,6 +135,7 @@ class _NewBlockState extends State<NewBlock> {
       );
       Provider.of<PrivateBlocks>(context, listen: false)
           .addNewPrivateBlock(newPrivateBlock);
+      this.isLoading = false;
     }
 
     Navigator.of(context).pop();
@@ -294,194 +303,203 @@ class _NewBlockState extends State<NewBlock> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(16),
-      child: Form(
-        key: this._form,
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text(
-                    'New Block',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 24,
-                    ),
-                  ),
-                  PopupMenuButton(
-                    child: Container(
-                      padding:
-                          EdgeInsets.symmetric(vertical: 4, horizontal: 16),
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          width: 2,
-                          color: Colors.deepOrangeAccent,
+    return this.isLoading == true
+        ? Center(
+            child: CircularProgressIndicator(),
+          )
+        : Container(
+            padding: EdgeInsets.all(16),
+            child: Form(
+              key: this._form,
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: <Widget>[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Text(
+                          'New Block',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 24,
+                          ),
                         ),
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      child: Text(
-                        this.blockType,
-                        style: TextStyle(
-                          color: Colors.deepOrangeAccent,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    onSelected: (BlockType result) => _changeBlockType(result),
-                    itemBuilder: (BuildContext ctx) =>
-                        <PopupMenuEntry<BlockType>>[
-                      const PopupMenuItem(
-                        child: Text('Public'),
-                        value: BlockType.public,
-                      ),
-                      const PopupMenuItem(
-                        child: Text('Private'),
-                        value: BlockType.private,
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              TextFormField(
-                decoration: InputDecoration(labelText: 'Title'),
-                textInputAction: TextInputAction.next,
-                onFieldSubmitted: (_) {
-                  FocusScope.of(context).requestFocus(this._ownerFocusNode);
-                },
-                onSaved: (value) {
-                  this.blockTitle = value;
-                },
-              ),
-              TextFormField(
-                decoration: InputDecoration(labelText: 'Owner Name'),
-                textInputAction: TextInputAction.next,
-                focusNode: this._ownerFocusNode,
-                onFieldSubmitted: (_) {
-                  FocusScope.of(context)
-                      .requestFocus(this._descriptionFocusNode);
-                },
-                onSaved: (value) {
-                  this.owner = value;
-                },
-              ),
-              TextFormField(
-                decoration: InputDecoration(labelText: 'Description'),
-                textInputAction: TextInputAction.next,
-                focusNode: this._descriptionFocusNode,
-                onSaved: (value) {
-                  this.blockDesc = value;
-                },
-              ),
-              SizedBox(
-                height: 16,
-              ),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  // Block Type Popup button
-                  PopupMenuButton(
-                    child: Container(
-                      padding:
-                          EdgeInsets.symmetric(vertical: 4, horizontal: 16),
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          width: 2,
-                          color: Colors.deepOrangeAccent,
-                        ),
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      child: Text(
-                        this.type,
-                        style: TextStyle(
-                          color: Colors.deepOrangeAccent,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    onSelected: (Type result) => _changeType(result),
-                    itemBuilder: (BuildContext ctx) => this.typeOptions,
-                  ),
-                  // Block Type Popup button
-                  SizedBox(
-                    width: 8,
-                  ),
-                  // Category Popup Button
-                  PopupMenuButton(
-                    child: Container(
-                      padding:
-                          EdgeInsets.symmetric(vertical: 4, horizontal: 16),
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          width: 2,
-                          color: Colors.deepOrangeAccent,
-                        ),
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      child: Text(
-                        this.category,
-                        style: TextStyle(
-                          color: Colors.deepOrangeAccent,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    onSelected: (Category result) => _changeCategory(result),
-                    itemBuilder: (BuildContext ctx) => this.categoryOptions,
-                  ),
-                  SizedBox(
-                    width: 8,
-                  ),
-                  Expanded(
-                    child: this.blockType == 'public'
-                        ? TextFormField(
-                            decoration: InputDecoration(
-                              labelText: 'Reward',
+                        PopupMenuButton(
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 4, horizontal: 16),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                width: 2,
+                                color: Colors.deepOrangeAccent,
+                              ),
+                              borderRadius: BorderRadius.circular(15),
                             ),
-                            keyboardType: TextInputType.number,
-                            onSaved: (value) {
-                              this.reward = int.parse(value);
-                            },
-                          )
-                        : SizedBox(),
-                  ),
-                  // Category Popup Button
-                ],
-              ),
-              ButtonBar(
-                children: <Widget>[
-                  OutlineButton(
-                    textColor: Colors.deepOrangeAccent,
-                    child: Text(this.startDate),
-                    onPressed: () => _displayStartDatePicker(context),
-                  ),
-                  OutlineButton(
-                    textColor: Colors.deepOrangeAccent,
-                    child: Text(this.endDate),
-                    onPressed: () => _displayEndDatePicker(context),
-                  ),
-                ],
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 8),
-                child: RaisedButton(
-                  elevation: 6,
-                  textColor: Colors.white,
-                  color: Colors.deepOrangeAccent,
-                  child: Text(
-                    'Submit',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  onPressed: () => this._saveForm(this.blockType),
+                            child: Text(
+                              this.blockType,
+                              style: TextStyle(
+                                color: Colors.deepOrangeAccent,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          onSelected: (BlockType result) =>
+                              _changeBlockType(result),
+                          itemBuilder: (BuildContext ctx) =>
+                              <PopupMenuEntry<BlockType>>[
+                            const PopupMenuItem(
+                              child: Text('Public'),
+                              value: BlockType.public,
+                            ),
+                            const PopupMenuItem(
+                              child: Text('Private'),
+                              value: BlockType.private,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    TextFormField(
+                      decoration: InputDecoration(labelText: 'Title'),
+                      textInputAction: TextInputAction.next,
+                      onFieldSubmitted: (_) {
+                        FocusScope.of(context)
+                            .requestFocus(this._ownerFocusNode);
+                      },
+                      onSaved: (value) {
+                        this.blockTitle = value;
+                      },
+                    ),
+                    TextFormField(
+                      decoration: InputDecoration(labelText: 'Owner Name'),
+                      textInputAction: TextInputAction.next,
+                      focusNode: this._ownerFocusNode,
+                      onFieldSubmitted: (_) {
+                        FocusScope.of(context)
+                            .requestFocus(this._descriptionFocusNode);
+                      },
+                      onSaved: (value) {
+                        this.owner = value;
+                      },
+                    ),
+                    TextFormField(
+                      decoration: InputDecoration(labelText: 'Description'),
+                      textInputAction: TextInputAction.next,
+                      focusNode: this._descriptionFocusNode,
+                      onSaved: (value) {
+                        this.blockDesc = value;
+                      },
+                    ),
+                    SizedBox(
+                      height: 16,
+                    ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        // Block Type Popup button
+                        PopupMenuButton(
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 4, horizontal: 16),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                width: 2,
+                                color: Colors.deepOrangeAccent,
+                              ),
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            child: Text(
+                              this.type,
+                              style: TextStyle(
+                                color: Colors.deepOrangeAccent,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          onSelected: (Type result) => _changeType(result),
+                          itemBuilder: (BuildContext ctx) => this.typeOptions,
+                        ),
+                        // Block Type Popup button
+                        SizedBox(
+                          width: 8,
+                        ),
+                        // Category Popup Button
+                        PopupMenuButton(
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 4, horizontal: 16),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                width: 2,
+                                color: Colors.deepOrangeAccent,
+                              ),
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            child: Text(
+                              this.category,
+                              style: TextStyle(
+                                color: Colors.deepOrangeAccent,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          onSelected: (Category result) =>
+                              _changeCategory(result),
+                          itemBuilder: (BuildContext ctx) =>
+                              this.categoryOptions,
+                        ),
+                        SizedBox(
+                          width: 8,
+                        ),
+                        Expanded(
+                          child: this.blockType == 'public'
+                              ? TextFormField(
+                                  decoration: InputDecoration(
+                                    labelText: 'Reward',
+                                  ),
+                                  keyboardType: TextInputType.number,
+                                  onSaved: (value) {
+                                    this.reward = int.parse(value);
+                                  },
+                                )
+                              : SizedBox(),
+                        ),
+                        // Category Popup Button
+                      ],
+                    ),
+                    ButtonBar(
+                      children: <Widget>[
+                        OutlineButton(
+                          textColor: Colors.deepOrangeAccent,
+                          child: Text(this.startDate),
+                          onPressed: () => _displayStartDatePicker(context),
+                        ),
+                        OutlineButton(
+                          textColor: Colors.deepOrangeAccent,
+                          child: Text(this.endDate),
+                          onPressed: () => _displayEndDatePicker(context),
+                        ),
+                      ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 0, horizontal: 8),
+                      child: RaisedButton(
+                        elevation: 6,
+                        textColor: Colors.white,
+                        color: Colors.deepOrangeAccent,
+                        child: Text(
+                          'Submit',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        onPressed: () => this._saveForm(this.blockType),
+                      ),
+                    )
+                  ],
                 ),
-              )
-            ],
-          ),
-        ),
-      ),
-    );
+              ),
+            ),
+          );
   }
 }
